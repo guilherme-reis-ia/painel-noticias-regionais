@@ -1,0 +1,44 @@
+name: Atualizar notícias
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: atualizar-noticias
+  cancel-in-progress: false
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar o repositório
+        uses: actions/checkout@v4
+
+      - name: Instalar o Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Instalar as bibliotecas
+        run: pip install feedparser requests beautifulsoup4
+
+      - name: Coletar as notícias
+        run: python coletar.py
+
+      - name: Salvar noticias.json somente se mudou
+        run: |
+          if [ -n "$(git status --porcelain noticias.json)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add noticias.json
+            git commit -m "Atualiza notícias"
+            git pull --rebase
+            git push
+          else
+            echo "Nada mudou. Nada a salvar."
+          fi
