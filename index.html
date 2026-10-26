@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notícias da Região – Mococa, São José do Rio Pardo e Casa Branca</title>
+<meta name="description" content="Notícias de Mococa, São José do Rio Pardo e Casa Branca reunidas em um só lugar, atualizadas a cada hora.">
+
+<!-- =====================================================================
+     CONFIGURAÇÃO — é aqui que você edita valores, WhatsApp e banners.
+     ===================================================================== -->
+<script>
+const CONFIG = {
+  // Número do WhatsApp com país + DDD + número, só dígitos. Ex.: "5519999999999"
+  whatsapp: "SEU_NUMERO_AQUI",
+  mensagemWhatsapp: "Olá! Quero anunciar no Notícias da Região.",
+
+  // Botão do Instagram (o robô NÃO coleta o Instagram, é só um link)
+  instagram: {
+    texto: "Siga o Jornal Meio Dia no Instagram",
+    url: "https://www.instagram.com/jornalmeiodia/"
+  },
+
+  // A página busca o noticias.json de novo a cada X minutos
+  atualizarACadaMinutos: 10,
+
+  // O anúncio "Médio" aparece depois de cada X notícias
+  anuncioMedioACada: 8,
+
+  // Espaços de propaganda.
+  // Para trocar "Anuncie aqui" por um banner, preencha "imagem" (e "link").
+  // Exemplo: banner: { imagem: "banner-padaria.jpg", link: "https://site.com", alt: "Padaria X" }
+  anuncios: {
+    destaque: { nome: "Espaço Destaque", valor: "R$ 200,00",
+                banner: { imagem: "", link: "", alt: "" } },
+    medio:    { nome: "Espaço Médio",    valor: "R$ 100,00",
+                banner: { imagem: "", link: "", alt: "" } },
+    basico:   { nome: "Espaço Básico",   valor: "R$ 50,00",
+                banner: { imagem: "", link: "", alt: "" } }
+  }
+};
+</script>
+<!-- ===================== FIM DA CONFIGURAÇÃO ===================== -->
+
+<style>
+  :root {
+    --fundo: #f4f6f8; --cartao: #ffffff; --texto: #1b1f24; --suave: #5b6672;
+    --marca: #0b5fa5; --linha: #e1e5ea; --verde: #1a8f4c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fundo: #14181d; --cartao: #1e242b; --texto: #e8ecf0; --suave: #9aa6b2;
+      --marca: #5aa9ec; --linha: #2c343d; --verde: #34c274;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--fundo); color: var(--texto);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 14px; }
+  .topo { background: var(--marca); color: #fff; padding: 22px 0 18px; }
+  .topo h1 { margin: 0; font-size: 1.7rem; }
+  .topo .cidades { margin: 4px 0 0; opacity: .92; font-size: .98rem; }
+
+  main { padding-top: 14px; padding-bottom: 10px; }
+  .barra { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 14px 0; }
+  .btn-insta {
+    display: inline-block; padding: 9px 14px; border-radius: 999px; font-weight: 600;
+    background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af); color: #fff;
+    text-decoration: none; font-size: .92rem;
+  }
+  .status { margin: 0; color: var(--suave); font-size: .85rem; }
+
+  .card {
+    background: var(--cartao); border: 1px solid var(--linha); border-radius: 12px;
+    padding: 14px 16px; margin-bottom: 12px;
+  }
+  .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: .8rem; color: var(--suave); }
+  .chip { padding: 2px 9px; border-radius: 999px; font-weight: 700; color: #fff; background: #6b7785; }
+  .c-mococa { background: #0b5fa5; }
+  .c-sjrp   { background: #b4531a; }
+  .c-cb     { background: #1a8f4c; }
+  .card h2 { margin: 8px 0 6px; font-size: 1.12rem; line-height: 1.3; }
+  .card h2 a { color: var(--texto); text-decoration: none; }
+  .card h2 a:hover { text-decoration: underline; }
+  .card p { margin: 0 0 8px; color: var(--suave); font-size: .95rem; }
+  .ler { color: var(--marca); font-weight: 600; font-size: .9rem; text-decoration: none; }
+  .ler:hover { text-decoration: underline; }
+  .vazio { text-align: center; color: var(--suave); padding: 30px 10px; }
+
+  .anuncio {
+    border: 2px dashed var(--linha); border-radius: 12px; background: var(--cartao);
+    text-align: center; padding: 14px; margin-bottom: 12px;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .anuncio-rotulo { font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--suave); }
+  .anuncio-titulo { font-size: 1.15rem; }
+  .anuncio-valor { color: var(--suave); font-size: .9rem; }
+  .anuncio img { max-width: 100%; height: auto; border-radius: 8px; display: block; }
+  .anuncio-destaque { min-height: 150px; justify-content: center; }
+  .anuncio-destaque .anuncio-titulo { font-size: 1.5rem; }
+  .anuncio-medio { min-height: 100px; justify-content: center; }
+  .anuncio-basico { padding: 10px; }
+  .anuncio-basico .anuncio-titulo { font-size: 1rem; }
+  .btn-zap {
+    display: inline-block; margin-top: 6px; padding: 8px 14px; border-radius: 8px;
+    background: var(--verde); color: #fff; font-weight: 700; text-decoration: none; font-size: .9rem;
+  }
+  .rodape { padding-top: 6px; padding-bottom: 26px; color: var(--suave); font-size: .8rem; text-align: center; }
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <div class="wrap">
+    <h1>Notícias da Região</h1>
+    <p class="cidades">Mococa · São José do Rio Pardo · Casa Branca</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="ad-destaque" style="margin-top:14px"></div>
+  <div class="barra">
+    <a id="btn-instagram" class="btn-insta" target="_blank" rel="noopener noreferrer"></a>
+    <p id="status" class="status">Carregando notícias…</p>
+  </div>
+  <section id="lista" aria-live="polite"></section>
+</main>
+
+<footer class="wrap rodape">
+  <div id="ad-basico"></div>
+  <p>Os títulos, resumos e links pertencem aos sites de origem. Clique para ler a matéria completa na fonte.</p>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- utilidades ----------
+  function el(tag, props) {
+    const e = document.createElement(tag);
+    if (props) {
+      for (const [k, v] of Object.entries(props)) {
+        if (k === "class") e.className = v;
+        else if (k === "text") e.textContent = v;
+        else e.setAttribute(k, v);
+      }
+    }
+    for (let i = 2; i < arguments.length; i++) {
+      if (arguments[i] != null) e.append(arguments[i]);
+    }
+    return e;
+  }
+
+  function linkSeguro(url) {
+    try {
+      const u = new URL(url, location.href);
+      return (u.protocol === "http:" || u.protocol === "https:") ? u.href : "#";
+    } catch (e) { return "#"; }
+  }
+
+  const fmtData = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: "America/Sao_Paulo", day: "2-digit", month: "2-digit",
+    year: "numeric", hour: "2-digit", minute: "2-digit"
+  });
+  const fmtHora = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: "America/Sao_Paulo", hour: "2-digit", minute: "2-digit"
+  });
+
+  function quando(iso) {
+    const d = new Date(iso);
+    if (isNaN(d)) return "";
+    const min = Math.round((Date.now() - d.getTime()) / 60000);
+    let rel = "";
+    if (min >= 0 && min < 2) rel = "agora há pouco";
+    else if (min >= 2 && min < 60) rel = "há " + min + " min";
+    else if (min >= 60 && min < 1440) rel = "há " + Math.floor(min / 60) + " h";
+    return fmtData.format(d) + (rel ? " · " + rel : "");
+  }
+
+  function classeCidade(cidade) {
+    if (cidade === "Mococa") return "c-mococa";
+    if (cidade === "São José do Rio Pardo") return "c-sjrp";
+    if (cidade === "Casa Branca") return "c-cb";
+    return "";
+  }
+
+  function linkWhatsapp() {
+    const numero = String(CONFIG.whatsapp).replace(/\D/g, "");
+    const texto = encodeURIComponent(CONFIG.mensagemWhatsapp);
+    return numero ? "https://wa.me/" + numero + "?text=" + texto
+                  : "https://wa.me/?text=" + texto;
+  }
+
+  // ---------- anúncios ----------
+  function criarAnuncio(chave) {
+    const c = CONFIG.anuncios[chave];
+    const caixa = el("aside", { "class": "anuncio anuncio-" + chave, "aria-label": "Publicidade" });
+    if (c.banner && c.banner.imagem) {
+      const img = el("img", { src: c.banner.imagem, alt: c.banner.alt || "Publicidade", loading: "lazy" });
+      if (c.banner.link) {
+        caixa.append(el("a", { href: linkSeguro(c.banner.link), target: "_blank",
+                               rel: "noopener noreferrer sponsored" }, img));
+      } else {
+        caixa.append(img);
+      }
+      return caixa;
+    }
+    caixa.append(
+      el("span", { "class": "anuncio-rotulo", text: "Publicidade" }),
+      el("strong", { "class": "anuncio-titulo", text: "Anuncie aqui" }),
+      el("span", { "class": "anuncio-valor", text: c.nome + " · " + c.valor }),
+      el("a", { "class": "btn-zap", href: linkWhatsapp(), target: "_blank",
+                rel: "noopener noreferrer", text: "Anunciar pelo WhatsApp" })
+    );
+    return caixa;
+  }
+
+  // ---------- notícias ----------
+  function criarCartao(n) {
+    const meta = el("div", { "class": "meta" });
+    if (n.cidade) meta.append(el("span", { "class": "chip " + classeCidade(n.cidade), text: n.cidade }));
+    meta.append(el("span", { text: n.fonte || "" }));
+    meta.append(el("span", { text: quando(n.data) }));
+
+    const titulo = el("h2", null,
+      el("a", { href: linkSeguro(n.link), target: "_blank", rel: "noopener noreferrer", text: n.titulo }));
+
+    const cartao = el("article", { "class": "card" }, meta, titulo);
+    if (n.resumo) cartao.append(el("p", { text: n.resumo }));
+    cartao.append(el("a", { "class": "ler", href: linkSeguro(n.link), target: "_blank",
+                            rel: "noopener noreferrer", text: "Ler na fonte →" }));
+    return cartao;
+  }
+
+  function renderizar(dados) {
+    const lista = document.getElementById("lista");
+    lista.replaceChildren();
+    const noticias = dados.noticias;
+    if (!noticias.length) {
+      lista.append(el("p", { "class": "vazio", text: "Nenhuma notícia por enquanto. Volte em instantes." }));
+      return;
+    }
+    const intervalo = Number(CONFIG.anuncioMedioACada) || 8;
+    noticias.forEach(function (n, i) {
+      lista.append(criarCartao(n));
+      if ((i + 1) % intervalo === 0 && i + 1 < noticias.length) {
+        lista.append(criarAnuncio("medio"));
+      }
+    });
+  }
+
+  function mostrarStatus(dados) {
+    const d = new Date(dados.atualizado_em);
+    const quandoAtualizou = isNaN(d) ? "—" : fmtData.format(d);
+    document.getElementById("status").textContent =
+      "Atualizado em " + quandoAtualizou + " · verificado às " + fmtHora.format(new Date());
+  }
+
+  async function carregar() {
+    try {
+      const resp = await fetch("noticias.json?t=" + Date.now(), { cache: "no-store" });
+      if (!resp.ok) throw new Error("HTTP " + resp.status);
+      const dados = await resp.json();
+      if (!dados || !Array.isArray(dados.noticias)) throw new Error("formato inesperado");
+      renderizar(dados);
+      mostrarStatus(dados);
+    } catch (erro) {
+      const status = document.getElementById("status");
+      status.textContent = "Não foi possível atualizar agora. Tentaremos novamente em instantes.";
+      if (!document.querySelector("#lista .card")) {
+        document.getElementById("lista").replaceChildren(
+          el("p", { "class": "vazio", text: "Não foi possível carregar as notícias." }));
+      }
+    }
+  }
+
+  // ---------- início ----------
+  const insta = document.getElementById("btn-instagram");
+  insta.href = linkSeguro(CONFIG.instagram.url);
+  insta.textContent = CONFIG.instagram.texto;
+
+  document.getElementById("ad-destaque").append(criarAnuncio("destaque"));
+  document.getElementById("ad-basico").append(criarAnuncio("basico"));
+
+  carregar();
+  setInterval(carregar, Math.max(1, Number(CONFIG.atualizarACadaMinutos) || 10) * 60 * 1000);
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) carregar();
+  });
+})();
+</script>
+</body>
+</html>
