@@ -1,0 +1,54 @@
+{
+  "fontes": [
+    {
+      "nome": "g1 Mococa",
+      "tipo": "auto",
+      "endereco": "https://g1.globo.com/sp/sao-carlos-regiao/cidade/mococa/",
+      "cidade": "Mococa",
+      "feed": ""
+    },
+    {
+      "nome": "R7 Interior de SP",
+      "tipo": "auto",
+      "endereco": "https://noticias.r7.com/sao-paulo/interior/",
+      "cidade": "",
+      "filtrar_por_cidade": true,
+      "feed": ""
+    },
+    {
+      "nome": "Prefeitura de Mococa",
+      "tipo": "auto",
+      "endereco": "https://www.mococa.sp.gov.br/",
+      "cidade": "Mococa",
+      "feed": ""
+    },
+    {
+      "nome": "Portal Rio Pardo",
+      "tipo": "auto",
+      "endereco": "https://portalriopardo.com.br/",
+      "cidade": "São José do Rio Pardo",
+      "feed": ""
+    },
+    {
+      "nome": "g1 São José do Rio Pardo",
+      "tipo": "auto",
+      "endereco": "https://g1.globo.com/sp/sao-carlos-regiao/cidade/sao-jose-do-rio-pardo/",
+      "cidade": "São José do Rio Pardo",
+      "feed": ""
+    },
+    {
+      "nome": "Casa Branca Portal da Cidade",
+      "tipo": "auto",
+      "endereco": "https://casabranca.portaldacidade.com/",
+      "cidade": "Casa Branca",
+      "feed": ""
+    },
+    {
+      "nome": "Jornal Meio Dia (Instagram)",
+      "tipo": "link",
+      "endereco": "https://www.instagram.com/jornalmeiodia/",
+      "cidade": "",
+      "feed": ""
+    }
+  ]
+}
