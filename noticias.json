@@ -1,0 +1,33 @@
+{
+  "atualizado_em": "2026-10-26T10:30:00-03:00",
+  "total": 3,
+  "noticias": [
+    {
+      "titulo": "Exemplo: prefeitura divulga programação de eventos do fim de semana em Mococa",
+      "resumo": "Texto de exemplo para mostrar como a notícia aparece na página. Será substituído quando o robô fizer a primeira coleta.",
+      "fonte": "Prefeitura de Mococa",
+      "cidade": "Mococa",
+      "data": "2026-10-26T10:00:00-03:00",
+      "link": "https://www.mococa.sp.gov.br/",
+      "exemplo": true
+    },
+    {
+      "titulo": "Exemplo: cultura e turismo em São José do Rio Pardo ganham novo roteiro",
+      "resumo": "Texto de exemplo para mostrar como a notícia aparece na página. Será substituído quando o robô fizer a primeira coleta.",
+      "fonte": "Portal Rio Pardo",
+      "cidade": "São José do Rio Pardo",
+      "data": "2026-10-26T09:15:00-03:00",
+      "link": "https://portalriopardo.com.br/",
+      "exemplo": true
+    },
+    {
+      "titulo": "Exemplo: Casa Branca realiza mutirão de serviços para moradores",
+      "resumo": "Texto de exemplo para mostrar como a notícia aparece na página. Será substituído quando o robô fizer a primeira coleta.",
+      "fonte": "Casa Branca Portal da Cidade",
+      "cidade": "Casa Branca",
+      "data": "2026-10-25T18:40:00-03:00",
+      "link": "https://casabranca.portaldacidade.com/",
+      "exemplo": true
+    }
+  ]
+}
